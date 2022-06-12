@@ -1,32 +1,50 @@
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const SignUp = () => {
+  const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const auth = getAuth();
-
-  const navigate = useNavigate();
-
-  const signUp = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        alert("ログインが完了しました。ログインしたユーザーのIDは" + user.uid);
-        navigate("/home"); // 画面遷移
-      })
-      .catch((error) => {
-        console.log({ error });
-        alert("エラーが発生しました。");
+  // const signUp = () => {
+  //   createUserWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       const user = userCredential.user;
+  //       alert("ログインが完了しました。ログインしたユーザのIDは" + user.uid);
+  //     })
+  //     .catch((error) => {
+  //       console.log({ error });
+  //       alert("エラーが発生しました。");
+  //     });
+  // };
+  const signUp = async () => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      alert(
+        "サインアップが完了しました。サインアップしたユーザのIDは" + user.uid
+      );
+      // ここでfirestore databaseにサインアップしたユーザーを追加している
+      const docRef = await addDoc(collection(db, "users"), {
+        id: user.uid,
+        email: email,
+        pasword: password,
       });
+      alert("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.log({ error });
+      alert("エラーが発生しました。");
+    }
   };
   return (
     <>
-      <div>ログイン</div>
       <div>
-        <label>メールアドレス：</label>
+        <h1>サインアップするためのページです。</h1>
+        <label>メールアドレス:</label>
         <input
           type="text"
           onChange={(e) => setEmail(e.target.value)}
@@ -41,9 +59,10 @@ const SignUp = () => {
           value={password}
         />
       </div>
-      <button onClick={signUp}>ログインする</button>
+      <button onClick={signUp}>サインアップする</button>
+      <a href="http://localhost:3000/login">ログイン画面に移動する</a>
     </>
   );
 };
 
-export default SignUp
+export default SignUp;
