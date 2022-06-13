@@ -2,11 +2,13 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   // const signUp = () => {
   //   createUserWithEmailAndPassword(auth, email, password)
   //     .then((userCredential) => {
@@ -35,6 +37,7 @@ const SignUp = () => {
         pasword: password,
       });
       alert("Document written with ID: ", docRef.id);
+      navigate("/home");
     } catch (error) {
       console.log({ error });
       alert("エラーが発生しました。");
@@ -60,7 +63,7 @@ const SignUp = () => {
         />
       </div>
       <button onClick={signUp}>サインアップする</button>
-      <a href="http://localhost:3000/login">ログイン画面に移動する</a>
+      <a href="http://localhost:3000/login">ログイン画面に移動します</a>
     </>
   );
 };

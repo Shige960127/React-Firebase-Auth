@@ -1,7 +1,7 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { db } from "../firebase";
-import { collection, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -14,14 +14,15 @@ const Login = () => {
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       alert("ログインが完了しました。ログインしたユーザーのIDは" + user.uid);
-      const docRef = await getDoc(collection(db, "users"), {
+      const docRef = await getDocs(collection(db, "users"), {
         id: user.uid,
         email: email,
         password: password,
       });
+      console.log("id:" + user.uid, "email:" + email, "password:" + password);
 
       alert("Document read with ID: ", docRef.id);
-      navigate("http://localhost:3000/login/home");
+      navigate("/home");
     } catch (error) {
       console.log({ error });
       alert("エラーが発生しました。");
