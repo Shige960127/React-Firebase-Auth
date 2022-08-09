@@ -10,7 +10,5 @@ const firebaseConfig = {
   messagingSenderId: Constants!.manifest!.extra!.FIREBASE_MESSAGE_SENDER_ID,
   appId: Constants!.manifest!.extra!.FIREBASE_APP_ID,
 };
-console.log(Constants);
-console.log(firebaseConfig);
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
