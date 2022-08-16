@@ -1,6 +1,3 @@
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
 import { useState } from "react";
 import {
   SafeAreaView,
@@ -8,38 +5,32 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
 } from "react-native";
 import { useTailwind } from "tailwind-rn/dist";
+import { handleSignUp } from "../store/user";
+import { AppDispatch } from "../store";
+import { useDispatch } from "react-redux";
+
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
+type user = {
+  email: string;
+  password: string;
+};
 
 const SignUpScreen = ({ navigation }: Props) => {
-  const auth = getAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
   const tailwind = useTailwind();
-
-  const signUp = async () => {
-    try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      alert(
-        "サインアップが完了しました、サインアップしたユーザのIDは" + user.uid
-      );
-      await addDoc(collection(db, "users"), {
-        id: user.uid,
-        email: email,
-        password: password,
-      });
-    } catch ({ error }) {
-      console.log(error);
-    }
-  };
+  const [user, setUser] = useState<user>({ email: "", password: "" });
+  const update =
+    (field: keyof user) =>
+    (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+      if (user) setUser({ ...user, [field]: e.nativeEvent.text });
+    };
   return (
     <SafeAreaView style={tailwind("flex-1 bg-stone-200")}>
       <View style={tailwind("bg-white w-3/4 h-2/4 mt-20 ml-12 pt-2 pl-2")}>
@@ -52,8 +43,8 @@ const SignUpScreen = ({ navigation }: Props) => {
           </View>
           <TextInput
             style={tailwind("w-40 border rounded")}
-            onChange={(e) => setEmail(e.nativeEvent.text)}
-            value={email}
+            onChange={update("email")}
+            value={user?.email}
             autoCapitalize={"none"}
           />
         </View>
@@ -63,13 +54,13 @@ const SignUpScreen = ({ navigation }: Props) => {
           </View>
           <TextInput
             style={tailwind("w-40 border rounded")}
-            onChange={(e) => setPassword(e.nativeEvent.text)}
-            value={password}
+            onChange={update("password")}
+            value={user?.password}
             autoCapitalize={"none"}
             secureTextEntry
           />
         </View>
-        <TouchableOpacity onPress={signUp}>
+        <TouchableOpacity onPress={() => dispatch(handleSignUp({ ...user }))}>
           <Text>サインアップする</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>

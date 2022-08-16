@@ -4,13 +4,13 @@ import SignUpScreen from "./src/screen/SignUpScreen";
 import SignInScreen from "./src/screen/SignInScreen";
 import HomeScreen from "./src/screen/ HomeScreen";
 import WaveformScreen from "./src/screen/WaveformScreen";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import store from "./src/store/index";
-import { UserState, getUser } from "./src/store/user";
+import store, { AppDispatch } from "./src/store/index";
+import { UserState, getUser, checkLogin } from "./src/store/user";
 import { useSelector, Provider, useDispatch } from "react-redux";
-import { AppDispatch } from "./src/store/index";
 
 export type RootStackParamList = {
   SignUp: undefined;
@@ -71,7 +71,7 @@ const RootScreen = () => {
   const { status, isLogined } = useSelector(({ user }: RootReducer) => user);
   const dispatch = useDispatch<AppDispatch>();
   if (status === "initial") {
-    dispatch(getUser());
+    dispatch(checkLogin());
   }
   return (
     <Stack.Navigator initialRouteName="Initial">
