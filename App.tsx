@@ -1,15 +1,15 @@
 import { TailwindProvider } from "tailwind-rn";
 import utilities from "./tailwind.json";
-import SignUpScreen from "./src/screen/SignUpScreen";
-import SignInScreen from "./src/screen/SignInScreen";
-import HomeScreen from "./src/screen/ HomeScreen";
-import WaveformScreen from "./src/screen/WaveformScreen";
-
+import SignUpScreen from "screens/SignUpScreen";
+import SignInScreen from "screens/SignInScreen";
+import WaveformScreen from "screens/WaveformScreen";
+import TimerScreen from "screens/TimerScreen";
+import HomeScreen from "screens/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import store, { AppDispatch } from "./src/store/index";
-import { UserState, getUser, checkLogin } from "./src/store/user";
+import store, { AppDispatch } from "./src/stores/index";
+import { UserState, getUser, checkLogin } from "./src/stores/user";
 import { useSelector, Provider, useDispatch } from "react-redux";
 
 export type RootStackParamList = {
@@ -19,6 +19,7 @@ export type RootStackParamList = {
   Waveform: undefined;
   Initial: undefined;
   Main: undefined;
+  Timer: undefined;
 };
 
 export type RootReducer = {
@@ -35,13 +36,20 @@ function HomeStackScreen() {
     </HomeStack.Navigator>
   );
 }
-
 const WaveformStack = createNativeStackNavigator();
 function WaveformStackScreen() {
   return (
     <WaveformStack.Navigator>
       <WaveformStack.Screen name="Waveform" component={WaveformScreen} />
     </WaveformStack.Navigator>
+  );
+}
+const TimerStack = createNativeStackNavigator();
+function TimerStackScreen() {
+  return (
+    <TimerStack.Navigator>
+      <TimerStack.Screen name="Tiemr" component={TimerScreen} />
+    </TimerStack.Navigator>
   );
 }
 
@@ -55,6 +63,11 @@ const MainScreen = () => (
     <Tab.Screen
       name="WaveformStack"
       component={WaveformStackScreen}
+      options={{ headerShown: false }}
+    />
+    <Tab.Screen
+      name="TimerStack"
+      component={TimerStackScreen}
       options={{ headerShown: false }}
     />
   </Tab.Navigator>
